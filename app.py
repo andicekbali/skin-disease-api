@@ -77,11 +77,16 @@ def predict_image():
         g_avg_norm = g_avg / 255.0
         b_avg_norm = b_avg / 255.0
 
-        # Prediksi dengan KNN
+        # Prediksi dengan KNN dan dapatkan probabilitas
         prediction = knn.predict(np.array([r_avg_norm, g_avg_norm, b_avg_norm]).reshape(1, -1))
+        probabilities = knn.predict_proba(np.array([r_avg_norm, g_avg_norm, b_avg_norm]).reshape(1, -1))
+        
+        # Ambil confidence score (probabilitas tertinggi)
+        confidence = np.max(probabilities) * 100  # Konversi ke persentase
 
         return jsonify({
             "prediction": prediction[0],
+            "confidence": round(confidence, 2),  # Nilai confidence dengan 2 desimal
             "average_rgb": {"R": round(r_avg), "G": round(g_avg), "B": round(b_avg)}
         })
 
